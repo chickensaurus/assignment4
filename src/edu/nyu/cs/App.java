@@ -17,19 +17,34 @@ public class App {
    * The main function is automatically called first in a Java program.
    * This function contains the main logic of the program that makes use of all the other functions to solve the problem.
    * This main function MUST make use of the other functions to perform the tasks those functions are designed for, i.e.:
-   * - you must use the getFilepathFromUser() to get the file path to the text file that the user wants to analyze
-   * - you must use the getContentsOfFile() function whenever you need to get the contents of the text file
-   * - you must use the getTicsFromUser() function whenever you need to get the set of tics the user wants to analyze in the text
-   * - you must use the countOccurrences() function whenever you want to count the number of occurrences of a given tic within the text
-   * - you must use the calculatePercentage() function whenever you want to calculate the percentage of all tics in the text that a given tic consumes
-   * - you must use the calculateTicDensity() function to calculate the proportion of all words in the text that are tic words
+   * - getFilepathFromUser() to get the file path to the text file that the user wants to analyze
+   * - getContentsOfFile() function whenever you need to get the contents of the text file
+   * - getTicsFromUser() function whenever you need to get the set of tics the user wants to analyze in the text
+   * - countOccurrences() function whenever you want to count the number of occurrences of a given tic within the text
+   * - calculatePercentage() function whenever you want to calculate the percentage of all tics in the text that a given tic consumes
+   * - calculateTicDensity() function to calculate the proportion of all words in the text that are tic words
    * 
    * @param args An array of any command-line arguments.
    */
   public static void main(String[] args) throws Exception {
-
-    // complete this function according to the instructions
-
+System.out.println(calculatePercentage(3,4));
+    String contents = getContentsOfFile(getFilepathFromUser());
+    String tics[] = getTicsFromUser();
+    int total = 0;
+    System.out.println("...............................Analyzing text.................................");
+    System.out.println("Total number of tics: ");
+    System.out.println("Density of tics: "+calculateTicDensity(tics,contents));
+    System.out.println("...............................Tic breakdown..................................");
+    int count = 0;
+    for (int i=0; i<tics.length; i++) {
+      count=countOccurrences(tics[i],contents);
+      total = total + count;
+    }
+    for (int i=0; i<tics.length; i++) {
+      count=countOccurrences(tics[i],contents);
+      int percent = calculatePercentage(count,total);
+      System.out.printf("%-10s %-20s %-50s %n", tics[i], "/ "+count+" occurrences", "/ "+percent+"% of all tics");
+    }
   }
 
   /**
@@ -41,6 +56,10 @@ public class App {
    * @return The file path that the user enters, e.g. "data/trump_speech_010621.txt"
    */
   public static String getFilepathFromUser() {
+    System.out.println("What file would you like to open?");
+    String input = scn.nextLine();
+    return input;
+
 
     // complete the getFilepathFromUser function according to the instructions above
 
@@ -76,6 +95,15 @@ public class App {
     return fullText; // return the full text
   }
   
+  public static String[] getTicsFromUser() {
+    System.out.println("What words would you like to search for?");
+    String input = scn.nextLine();
+    String[] tics = input.split(",");
+    for (int i=0; i<tics.length; i++) {
+      tics[i] = tics[i].trim();
+    }
+    return tics;
+  }
  /**
    * getTicsFromUser method
    * Asks the user to enter a comma-separated list of tics, e.g. "uh,like, um, you know,so", and returns an array containing those tics, e.g. { "uh", "like", "um", "you know", "so" }.
@@ -87,7 +115,18 @@ public class App {
 
     // write the getTicsFromUser function according to the instructions
 
-
+  public static int countOccurrences(String needle, String haystack) {
+    haystack=haystack.toLowerCase();
+    needle=needle.toLowerCase();
+    String words[] = haystack.split("[ \n\t.,?!]+");
+    int count = 0;
+    for (int i=0; i<words.length; i++) {
+      if (words[i].equals(needle)) {
+        count=count+1;
+      }
+    }
+    return count;
+  }
  /**
    * countOccurrences method
    * Counts how many times a given string (the needle) occurs within another string (the haystack), ignoring case.
@@ -97,7 +136,10 @@ public class App {
    */
 
     // write the countOccurrences function according to the instructions
-
+  public static int calculatePercentage(int num1, int num2) {
+    int percent = (int) Math.round(((num1+0.0)/num2)*100);
+    return percent;
+  }
   /**
    * calculatePercentage method
    * Calculates the equivalent percentage from the proportion of one number to another number.
@@ -108,7 +150,17 @@ public class App {
 
     // write the calculatePercentage function according to the instructions above
 
-
+  public static double calculateTicDensity(String tics[], String fullText) {
+    String words[] = fullText.split("[ \n\t.,?!]+");
+    int counter = 0;
+    for (int t=0; t<tics.length; t++) {
+      int n = countOccurrences(tics[t], fullText);
+      counter = counter + n;
+      }
+    double density = (counter+0.0)/words.length;
+    density = (double) Math.round(density*100.0)/100;
+    return density;
+  }
   /**
    * calculateTicDensity method
    * Calculates the "density" of tics in the text.  In other words, the proportion of tic words to the total number of words in a text.
@@ -123,6 +175,6 @@ public class App {
 
     // write the calculateTicDensity function according to the instructions above
 
-    
+
 
 } // end of class
